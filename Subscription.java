@@ -1,6 +1,6 @@
 package subsage;
 
-import java.util.*;
+import java.util.Date;
 
 public class Subscription implements Payable {
 
@@ -16,37 +16,17 @@ public class Subscription implements Payable {
         this.nextBillingDate = nextBillingDate;
     }
 
-    public String getName() { 
-        return name; 
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public void setName(String name) { 
-        this.name = name; 
-    }
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
 
-    public double getPrice() { 
-        return price; 
-    }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
-    public void setPrice(double price) { 
-        this.price = price; 
-    }
-
-    public String getCategory() { 
-        return category; 
-    }
-
-    public void setCategory(String category) { 
-        this.category = category; 
-    }
-
-    public Date getNextBillingDate() { 
-        return nextBillingDate; 
-    }
-
-    public void setNextBillingDate(Date nextBillingDate) { 
-        this.nextBillingDate = nextBillingDate; 
-    }
+    public Date getNextBillingDate() { return nextBillingDate; }
+    public void setNextBillingDate(Date nextBillingDate) { this.nextBillingDate = nextBillingDate; }
 
     @Override
     public double getMonthlyPayment() {
