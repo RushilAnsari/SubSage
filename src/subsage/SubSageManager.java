@@ -1,4 +1,4 @@
-package src.subsage;
+package subsage;
 public class SubSageManager {
     public class SubSageManager {
     
