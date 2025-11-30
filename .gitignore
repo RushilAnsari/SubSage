@@ -5,7 +5,7 @@
 *.log
 
 # Package archives
-*.jar
+#*.jar
 *.war
 *.ear
 *.zip
@@ -34,7 +34,7 @@ nbdist/
 .nb-gradle/
 
 # VS Code
-.vscode/
+#.vscode/
 
 # Mac / Windows junk
 .DS_Store
