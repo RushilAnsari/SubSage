@@ -1,4 +1,4 @@
-package src.subsage;
+package subsage;
 import java.util.Date;
 
 public class Payment {
