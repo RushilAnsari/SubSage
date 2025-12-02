@@ -1,61 +1,35 @@
 package subsage;
 
-import java.util.*;
-
-public class Subscription implements Payable {
-
-    private String name;
-    private double price;
+public class Subscription {
+    private int id;
+    private String username;
+    private String serviceName;
     private String category;
-    private Date nextBillingDate;
+    private double price;
+    private String cycle; 
+    private String nextDueDate;
+    private boolean autoRenew;
+    private String status; 
 
-    public Subscription(String name, double price, String category, Date nextBillingDate) {
-        this.name = name;
+    public Subscription(int id, String username, String serviceName, String category, double price, String cycle, String nextDueDate, boolean autoRenew, String status) {
+        this.id = id;
+        this.username = username;
+        this.serviceName = serviceName;
+        this.category = category; 
         this.price = price;
-        this.category = category;
-        this.nextBillingDate = nextBillingDate;
-
+        this.cycle = cycle;
+        this.nextDueDate = nextDueDate;
+        this.autoRenew = autoRenew;
+        this.status = status;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public Date getNextBillingDate() {
-        return nextBillingDate;
-    }
-
-    public void setNextBillingDate(Date nextBillingDate) {
-        this.nextBillingDate = nextBillingDate;
-    }
-
-    @Override
-    public double getMonthlyPayment() {
-        return price;
-    }
-
-    @Override
-    public String toString() {
-        return name + " | " + price + " | " + nextBillingDate;
-    }
+    public int getId() { return id; }
+    public String getUsername() { return username; }
+    public String getServiceName() { return serviceName; }
+    public String getCategory() { return category; } 
+    public double getPrice() { return price; }
+    public String getCycle() { return cycle; }
+    public String getNextDueDate() { return nextDueDate; }
+    public boolean isAutoRenew() { return autoRenew; }
+    public String getStatus() { return status; }
 }
