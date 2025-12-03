@@ -1,4 +1,11 @@
 package subsage;
-class main{
-    //i will write the  code in some time bro like fr 
+
+import javax.swing.SwingUtilities;
+
+public class Main {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new SubSageApp();
+        });
+    }
 }
