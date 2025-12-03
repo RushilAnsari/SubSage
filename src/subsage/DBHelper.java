@@ -71,7 +71,7 @@ public class DBHelper {
         return 0; // Default
     }
     // ----------------------
-    // we came from SubSageManager to here now!💀
+    // we came from SubSageManager to here now!
     public static boolean checkUserExists(String username) {
         String sql = "SELECT username FROM users WHERE username = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
