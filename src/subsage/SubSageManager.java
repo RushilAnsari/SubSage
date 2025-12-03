@@ -1,125 +1,60 @@
 package subsage;
 
+import java.util.List;
 
 public class SubSageManager {
-    // Constructor - sets up database connection
+    private String currentUser;
+
     public SubSageManager() {
-        DBHelper.initDatabase();
+        DBHelper.createNewDatabase();
     }
 
-    // ========== SUBSCRIPTION MANAGEMENT ==========
+    public boolean userExists(String username) {
+        return DBHelper.checkUserExists(username);
+    }
 
-    // Add a new subscription
-    public boolean addSubscription(Subscription subscription) {
-        // Check if subscription with same name already exists
-        if (findByName(subscription.getName()) != null) {
-            System.out.println("Subscription already exists: " + subscription.getName());
-            return false;
+    public boolean login(String username, String password) {
+        if (DBHelper.validateLogin(username, password)) {
+            this.currentUser = username;
+            return true;
         }
-        DBHelper.insertSubscription(subscription);
-        return true;
+        return false;
     }
 
-    // Get all subscriptions
-    public java.util.List<Subscription> getAllSubscriptions() {
-        return DBHelper.getAllSubscriptions();
+    public void register(String username, String password) {
+        DBHelper.registerUser(username, password);
+        this.currentUser = username;
     }
 
-    // Find subscription by name (for button clicks like Netflix)
-    public Subscription findByName(String name) {
-        for (Subscription sb : getAllSubscriptions()) {
-            if (sb.getName().equalsIgnoreCase(name))
-                return sb;
-        }
-        return null;
+    // --- BUDGET METHODS ---
+    public void setUserBudget(double limit) {
+        DBHelper.updateBudget(currentUser, limit);
     }
 
-    // Update an existing subscription
-    public boolean updateSubscription(String originalName, Subscription updatedSubscription) {
-        DBHelper.updateSubscription(originalName, updatedSubscription);
-        return true;
+    public double getUserBudget() {
+        return DBHelper.getBudget(currentUser);
+    }
+    // --------------------------
+
+    public String getCurrentUser() {
+        return currentUser;
     }
 
-    // Delete a subscription
-    public boolean deleteSubscription(String name) {
-        DBHelper.deleteSubscriptionByName(name);
-        return true;
+    public List<Subscription> getUserSubscriptions() {
+        return DBHelper.getSubscriptionsByUser(currentUser);
     }
 
-    // ========== PAYMENT MANAGEMENT ==========
-
-    // Record a payment for a subscription
-    /*
-     * public boolean markAsPaid(String subscriptionName, String paymentDate, String
-     * paymentMethod) {
-     * Subscription sub = findByName(subscriptionName);
-     * if (sub == null) {
-     * System.out.println("Subscription not found: " + subscriptionName);
-     * return false;
-     * }
-     * 
-     * return dbHelper.addPayment(
-     * subscriptionName,
-     * sub.getAmount(),
-     * paymentDate,
-     * paymentMethod,
-     * "Payment recorded"
-     * );
-     * }
-     * 
-     * // Get payment history for a subscription
-     * public java.util.List<String> getPaymentHistory(String subscriptionName) {
-     * return dbHelper.getPaymentHistory(subscriptionName);
-     * }
-     */
-    // ========== STATISTICS ==========
-
-    // Calculate total monthly spending
-    public double getTotalMonthlySpending() {
-        double total = 0.0;
-        for (Subscription sb : getAllSubscriptions()) {
-            total += sb.getMonthlyPayment();
-        }
-        return total;
+    public void addSubscription(String service, String category, double price, String cycle, String date, boolean renew, String status) {
+        Subscription newSub = new Subscription(0, currentUser, service, category, price, cycle, date, renew, status);
+        DBHelper.saveSubscription(newSub);
     }
 
-    // Get count of active subscriptions
-    public int getActiveSubscriptionsCount() {
-        return getAllSubscriptions().size();
+    public void updateSubscription(int id, String service, String category, double price, String cycle, String date, boolean renew, String status) {
+        Subscription sub = new Subscription(id, currentUser, service, category, price, cycle, date, renew, status);
+        DBHelper.updateSubscription(sub);
     }
 
-    // Get subscriptions by category
-    public java.util.List<Subscription> getSubscriptionsByCategory(String category) {
-        java.util.List<Subscription> all = getAllSubscriptions();
-        java.util.List<Subscription> filtered = new java.util.ArrayList<>();
-
-        for (Subscription sub : all) {
-            if (sub.getCategory().equalsIgnoreCase(category)) {
-                filtered.add(sub);
-            }
-        }
-
-        return filtered;
+    public void deleteSubscription(int id) {
+        DBHelper.deleteSubscription(id);
     }
-
-    // ========== UTILITY METHODS ==========
-
-    // Check if a subscription exists
-    public boolean subscriptionExists(String name) {
-        return findByName(name) != null;
-    }
-
-    // Get upcoming payments (simplified version)
-    public java.util.List<Subscription> getUpcomingPayments() {
-        // For now, just return all subscriptions
-        // You can enhance this later to filter by due date
-        return getAllSubscriptions();
-    }
-
-    /*
-     * // Clear all data (for testing)
-     * public void clearAllData() {
-     * dbHelper.clearAllData();
-     * }
-     */ 
 }
