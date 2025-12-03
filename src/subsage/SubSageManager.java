@@ -6,9 +6,10 @@ public class SubSageManager {
     private String currentUser;
 
     public SubSageManager() {
-        DBHelper.createNewDatabase();
+        DBHelper.createNewDatabase();//DBhelper is called to creat a new database
     }
 
+    //we just came from SubSageApp to here now to DBHELPER! (144)->(12)->(75)
     public boolean userExists(String username) {
         return DBHelper.checkUserExists(username);
     }
@@ -26,7 +27,7 @@ public class SubSageManager {
         this.currentUser = username;
     }
 
-    // --- BUDGET METHODS ---
+    // --- NEW BUDGET METHODS ---
     public void setUserBudget(double limit) {
         DBHelper.updateBudget(currentUser, limit);
     }
@@ -41,7 +42,7 @@ public class SubSageManager {
     }
 
     public List<Subscription> getUserSubscriptions() {
-        return DBHelper.getSubscriptionsByUser(currentUser);
+        return DBHelper.getSubscriptionsByUser(currentUser); // calls the DBhelper to get the subscriptions
     }
 
     public void addSubscription(String service, String category, double price, String cycle, String date, boolean renew, String status) {
