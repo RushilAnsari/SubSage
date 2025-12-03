@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 public class DBHelper {
     private static final String DB_URL = "jdbc:sqlite:subsage.db";
 
+    //this is the first thing that runs to create the WHOLE THING!
     public static void createNewDatabase() {
         try {
             Class.forName("org.sqlite.JDBC");
@@ -28,7 +29,7 @@ public class DBHelper {
                 + " status text\n"
                 + ");";
 
-        // NEW: Added 'budget' column
+        // budget got added w/ the users..
         String sqlUsers = "CREATE TABLE IF NOT EXISTS users (\n"
                 + " username text PRIMARY KEY,\n"
                 + " password text NOT NULL,\n"
@@ -70,7 +71,7 @@ public class DBHelper {
         return 0; // Default
     }
     // ----------------------
-
+    // we came from SubSageManager to here now!💀
     public static boolean checkUserExists(String username) {
         String sql = "SELECT username FROM users WHERE username = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);
