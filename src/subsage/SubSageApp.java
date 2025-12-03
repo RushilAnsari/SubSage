@@ -23,19 +23,17 @@ public class SubSageApp {
     private DefaultTableModel tableModel;
     private JPanel leftPanel;
     private JLabel totalLabel;
+    private JProgressBar budgetBar;
+    private JLabel budgetLabel;
     private List<Subscription> currentList; 
 
-    // Currency constant
     private static final double USD_TO_AED_RATE = 3.6725;
-
-    // Colors
     private static final Color PURPLE_COLOR = new Color(108, 99, 255);
     private static final Color TEXT_FIELD_BG = new Color(245, 246, 250);
     private static final Color TEXT_COLOR = new Color(51, 51, 51);
 
     public SubSageApp() {
         manager = new SubSageManager();
-        // Use a default font if Poppins isn't available
         setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 14));
         initLoginScreen();
     }
@@ -54,22 +52,28 @@ public class SubSageApp {
     // --- LOGIN SCREEN ---
     private void initLoginScreen() {
         JFrame loginFrame = new JFrame("SubSage - Login");
-        loginFrame.setSize(450, 700); 
+        loginFrame.setSize(450, 750); // Made taller to fit the logo
         loginFrame.setLayout(new BorderLayout());
         loginFrame.setLocationRelativeTo(null);
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         loginFrame.getContentPane().setBackground(Color.WHITE);
+
+        // 1. Set Window Icon (Top Left Corner)
+        try {
+            ImageIcon logoIcon = new ImageIcon("lib/logo.jpg");
+            loginFrame.setIconImage(logoIcon.getImage());
+        } catch (Exception e) { }
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
 
-        // Logo
+        // 2. BIG CENTRAL LOGO (Added this back!)
         try {
             ImageIcon logoIcon = new ImageIcon("lib/logo.jpg"); 
             Image image = logoIcon.getImage();
-            Image newimg = image.getScaledInstance(120, 120,  java.awt.Image.SCALE_SMOOTH); 
+            Image newimg = image.getScaledInstance(140, 140,  java.awt.Image.SCALE_SMOOTH); 
             logoIcon = new ImageIcon(newimg);
             JLabel logoLabel = new JLabel(logoIcon);
             logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -119,18 +123,14 @@ public class SubSageApp {
 
         mainPanel.add(Box.createVerticalStrut(20));
 
-        JButton btnLogin = new JButton("LOGIN");
-        btnLogin.setFont(new Font("SansSerif", Font.BOLD, 16));
-        btnLogin.setForeground(Color.WHITE);
-        btnLogin.setBackground(PURPLE_COLOR);
-        btnLogin.setFocusPainted(false);
-        btnLogin.setBorderPainted(false);
-        btnLogin.setOpaque(true);
-        btnLogin.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnLogin.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50)); 
-        btnLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btnLogin.setBorder(new EmptyBorder(10, 0, 10, 0)); 
+        // CENTERED LOGIN BUTTON
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setBackground(Color.WHITE);
 
+        JButton btnLogin = new JButton("LOGIN");
+        styleButton(btnLogin);
+        btnLogin.setPreferredSize(new Dimension(300, 50));
+        
         btnLogin.addActionListener(e -> {
             String username = userField.getText().trim();
             String password = new String(passField.getPassword()).trim();
@@ -151,7 +151,8 @@ public class SubSageApp {
                 JOptionPane.showMessageDialog(loginFrame, "User not found. Please Sign Up.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-        mainPanel.add(btnLogin);
+        buttonPanel.add(btnLogin);
+        mainPanel.add(buttonPanel);
 
         mainPanel.add(Box.createVerticalStrut(20));
 
@@ -224,24 +225,38 @@ public class SubSageApp {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(Color.WHITE);
         panel.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         JLabel label = new JLabel(labelText);
         label.setFont(new Font("SansSerif", Font.BOLD, 12));
         label.setForeground(TEXT_COLOR);
         label.setAlignmentX(Component.LEFT_ALIGNMENT);
-        
         panel.add(label);
         panel.add(Box.createVerticalStrut(5));
         panel.add(field);
         return panel;
     }
 
-    // --- DASHBOARD CODE ---
+    private void styleButton(JButton button) {
+        button.setFont(new Font("SansSerif", Font.BOLD, 14));
+        button.setForeground(Color.WHITE);
+        button.setBackground(PURPLE_COLOR);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setOpaque(true);
+        button.setBorder(new EmptyBorder(10, 20, 10, 20));
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }
+
+    // --- DASHBOARD CODE (Unchanged) ---
     private void initMainDashboard() {
         mainFrame = new JFrame("SubSage - " + manager.getCurrentUser());
-        mainFrame.setSize(1100, 650);
+        mainFrame.setSize(1200, 700);
         mainFrame.setLayout(new BorderLayout());
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        try {
+            ImageIcon logoIcon = new ImageIcon("lib/logo.jpg");
+            mainFrame.setIconImage(logoIcon.getImage());
+        } catch (Exception e) { }
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(new Color(50, 50, 50));
@@ -286,16 +301,10 @@ public class SubSageApp {
                         LocalDate today = LocalDate.now();
                         long daysBetween = ChronoUnit.DAYS.between(today, due);
 
-                        if ("Expired".equalsIgnoreCase(status)) {
-                            c.setBackground(new Color(255, 200, 200)); 
-                        } else if (daysBetween >= 0 && daysBetween <= 7) {
-                            c.setBackground(new Color(255, 255, 200)); 
-                        } else {
-                            c.setBackground(Color.WHITE);
-                        }
-                    } catch (Exception e) {
-                        c.setBackground(Color.WHITE);
-                    }
+                        if ("Expired".equalsIgnoreCase(status)) c.setBackground(new Color(255, 200, 200)); 
+                        else if (daysBetween >= 0 && daysBetween <= 7) c.setBackground(new Color(255, 255, 200)); 
+                        else c.setBackground(Color.WHITE);
+                    } catch (Exception e) { c.setBackground(Color.WHITE); }
                     c.setForeground(Color.BLACK);
                 } else {
                     c.setBackground(table.getSelectionBackground());
@@ -336,12 +345,35 @@ public class SubSageApp {
         });
         mainFrame.add(new JScrollPane(table), BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        // BOTTOM PANEL
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+        bottomPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
+
+        // Row 1: The Progress Bar
+        JPanel progressPanel = new JPanel(new BorderLayout());
+        budgetLabel = new JLabel("Budget Usage: 0%");
+        budgetLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
+        
+        budgetBar = new JProgressBar(0, 100);
+        budgetBar.setStringPainted(true);
+        budgetBar.setPreferredSize(new Dimension(100, 20));
+        
+        JButton btnSetBudget = new JButton("⚙");
+        btnSetBudget.setToolTipText("Set Monthly Budget Limit");
+        btnSetBudget.addActionListener(e -> setBudgetDialog());
+        btnSetBudget.setPreferredSize(new Dimension(30, 20));
+
+        progressPanel.add(budgetLabel, BorderLayout.WEST);
+        progressPanel.add(budgetBar, BorderLayout.CENTER);
+        progressPanel.add(btnSetBudget, BorderLayout.EAST);
+        
+        // Row 2: The Controls
+        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         totalLabel = new JLabel("Total: 0.00");
         totalLabel.setFont(new Font("Arial", Font.BOLD, 16));
         totalLabel.setForeground(PURPLE_COLOR); 
 
-        // Styled buttons in bottom panel
         JButton btnStats = new JButton("View Breakdown 📊");
         btnStats.addActionListener(e -> showBreakdown());
         styleButton(btnStats);
@@ -354,10 +386,15 @@ public class SubSageApp {
         btnRefresh.addActionListener(e -> refreshUI());
         styleButton(btnRefresh);
 
-        bottomPanel.add(totalLabel);
-        bottomPanel.add(btnStats);
-        bottomPanel.add(btnExport);
-        bottomPanel.add(btnRefresh);
+        controlPanel.add(totalLabel);
+        controlPanel.add(btnStats);
+        controlPanel.add(btnExport);
+        controlPanel.add(btnRefresh);
+
+        bottomPanel.add(progressPanel);
+        bottomPanel.add(Box.createVerticalStrut(5));
+        bottomPanel.add(controlPanel);
+
         mainFrame.add(bottomPanel, BorderLayout.SOUTH);
 
         refreshUI();
@@ -365,15 +402,17 @@ public class SubSageApp {
         mainFrame.setVisible(true);
     }
 
-    private void styleButton(JButton button) {
-        button.setFont(new Font("SansSerif", Font.BOLD, 14));
-        button.setForeground(Color.WHITE);
-        button.setBackground(PURPLE_COLOR);
-        button.setFocusPainted(false);
-        button.setBorderPainted(false);
-        button.setOpaque(true);
-        button.setBorder(new EmptyBorder(10, 20, 10, 20));
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    private void setBudgetDialog() {
+        String input = JOptionPane.showInputDialog(mainFrame, "Enter your monthly budget limit (AED):", manager.getUserBudget());
+        if (input != null) {
+            try {
+                double limit = Double.parseDouble(input);
+                manager.setUserBudget(limit);
+                refreshUI();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(mainFrame, "Invalid number");
+            }
+        }
     }
 
     private void refreshUI() {
@@ -413,6 +452,22 @@ public class SubSageApp {
         leftPanel.add(btnAdd);
 
         totalLabel.setText(String.format("Total Monthly: %.2f AED", totalMonthly));
+        
+        double budgetLimit = manager.getUserBudget();
+        if (budgetLimit > 0) {
+            int percent = (int) ((totalMonthly / budgetLimit) * 100);
+            budgetBar.setValue(percent);
+            budgetLabel.setText(String.format("Budget: %.0f / %.0f AED", totalMonthly, budgetLimit));
+            
+            if (percent < 80) budgetBar.setForeground(new Color(0, 180, 0)); 
+            else if (percent < 100) budgetBar.setForeground(Color.ORANGE);
+            else budgetBar.setForeground(Color.RED);
+        } else {
+            budgetBar.setValue(0);
+            budgetLabel.setText("No Budget Set");
+            budgetBar.setForeground(Color.GRAY);
+        }
+
         leftPanel.revalidate();
         leftPanel.repaint();
     }
@@ -514,12 +569,10 @@ public class SubSageApp {
                 LocalDate inputDate = LocalDate.parse(dateText);
                 String selectedCycle = (String) cycleBox.getSelectedItem();
 
-                // --- NEW LOGIC: Prevent past dates ---
                 if (inputDate.isBefore(today)) {
                     JOptionPane.showMessageDialog(dialog, "Error: The date cannot be in the past.");
                     return;
                 }
-                // -------------------------------------
 
                 LocalDate limitDate;
                 if ("Monthly".equalsIgnoreCase(selectedCycle)) {
